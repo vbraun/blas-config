@@ -1,0 +1,8 @@
+SITE_PACKAGES = '/home/vbraun/Code/blas-config/local/lib/python2.7/site-packages'
+
+import sys
+sys.path.insert(1, SITE_PACKAGES)
+
+
+
+
