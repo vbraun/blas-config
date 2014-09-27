@@ -1,0 +1,12 @@
+prefix=/usr
+libdir=/usr/lib64
+exec_prefix=${prefix}
+includedir=${prefix}/include
+
+Name: cblas
+Description: C Basic Linear Algebra Subprograms (CBLAS)
+Version: 1.0
+URL: http://www.gnu.org/software/gsl
+Libs: -L${libdir} -lblas
+Libs.private: -lm
+Cflags: -I${includedir}

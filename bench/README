@@ -1,0 +1,24 @@
+Simple BLAS Benchmark
+
+Taken from BlasBench, part of LLCbench. Released under the GPL (any
+version), see COPYING.
+
+This benchmark also serves as an example for how to use
+cblas/f77blas/lapack in your own autotool-based projects. There are
+two bits to it: First, your configure.ac (or configure.in if you still
+use the old naming convention) must contain, say, 
+
+    PKG_CHECK_MODULES([CBLAS], [cblas])
+
+if you want to use the C BLAS. This defines the variables CBLAS_CFLAGS
+and CBLAS_LIBS in your automake files. Typically, you would then add
+them to the compiler flags in your src/Makefile.am as in:
+ 
+    myprogram_CFLAGS = $(CBLAS_CFLAGS)
+    myprogram_LDADD = $(CBLAS_LIBS)
+
+To test a cblas.pc file that is not installed in the standard
+pkgconfig search path you can set the PKG_CONFIG_PATH environment
+variable when running configure:
+
+    PKG_CONFIG_PATH=/path/to/cblas/ ./configure
