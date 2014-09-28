@@ -12,3 +12,15 @@ install-exec-hook:
 	cd bench && make
 	cd bench && make -j1 install
 	$(bindir)/blas-benchmark
+
+mostlyclean-local:
+	-cd bench && make mostlyclean
+
+clean-local:
+	-cd bench && make clean
+
+distclean-local:
+	-cd bench && make distclean
+
+maintainer-clean-local:
+	-cd bench && make maintainer-clean

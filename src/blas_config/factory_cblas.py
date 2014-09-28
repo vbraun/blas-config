@@ -57,4 +57,44 @@ def build(cblas):
         Cflags: -m32 -I${includedir}
         """,
     )
+
+    # RedHat ATLAS
+    cblas.search64(
+        '/usr',
+        Includes('{prefix}/include', [
+            'cblas.h',
+        ]),
+        Libs('{prefix}/lib64/atlas', [
+            'libsatlas{shlib}', 
+        ]),
+        """    
+        Name: ATLAS Sequential
+        Description: Automatically Tuned Linear Algebra Software (ATLAS)
+        Version: {version}
+        URL: http://math-atlas.sourceforge.net
+        Libs: -L${libdir} -lsatlas ${rpath}
+        Libs.private: -lpthread -lm
+        Cflags: 
+        """,
+    )
+
+    # RedHat ATLAS
+    cblas.search32(
+        '/usr',
+        Includes('{prefix}/include', [
+            'cblas.h',
+        ]),
+        Libs('{prefix}/lib/atlas', [
+            'libsatlas{shlib}', 
+        ]),
+        """    
+        Name: ATLAS Sequential
+        Description: Automatically Tuned Linear Algebra Software (ATLAS)
+        Version: {version}
+        URL: http://math-atlas.sourceforge.net
+        Libs: -L${libdir} -lsatlas ${rpath}
+        Libs.private: -lpthread -lm
+        Cflags: 
+        """,
+    )
     

@@ -22,3 +22,6 @@ missing
 stamp-h1
 src/blas-benchmark
 blas-benchmark-*.tar.gz
+confdefs.h
+conftest.c
+conftest.err

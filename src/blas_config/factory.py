@@ -47,9 +47,9 @@ class FactoryBase(object):
         if self.override_prefix is not None:
             prefix = self.override_prefix
         includes.expand(prefix)
-        libs.expand(prefix)
         if not includes.validate():
             return
+        libs.expand(prefix)
         if not libs.validate():
             return
         pc = PkgConfig(self.name_pc, self.version, 

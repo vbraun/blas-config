@@ -16,9 +16,7 @@ def build(f77blas):
         # /opt/intel/mkl/tools/mkl_link_tool -p no -c gnu_f -a intel64 -opts
         # /opt/intel/mkl/tools/mkl_link_tool -p no -c gnu_f -a intel64 -libs
         '/opt/intel/mkl',
-        Includes('{prefix}/include', [
-            '{includedir}/mkl.h',
-        ]),
+        Includes('{prefix}/include', []),
         Libs('{prefix}/lib/intel64', [
             'libmkl_gf_lp64{shlib}', 
             'libmkl_sequential{shlib}', 
@@ -39,9 +37,7 @@ def build(f77blas):
         # /opt/intel/mkl/tools/mkl_link_tool -p no -c gnu_f -a ia-32 -opts
         # /opt/intel/mkl/tools/mkl_link_tool -p no -c gnu_f -a ia-32 -libs
         '/opt/intel/mkl',
-        Includes('{prefix}/include', [
-            '{includedir}/mkl.h',
-        ]),
+        Includes('{prefix}/include', []),
         Libs('{prefix}/lib/ia32', [
             'libmkl_gf{shlib}', 
             'libmkl_sequential{shlib}', 
@@ -57,5 +53,40 @@ def build(f77blas):
         Cflags: -m32 -I${includedir}
         """,
     )
-    
+        
+    # RedHat ATLAS
+    f77blas.search64(
+        '/usr',
+        Includes('{prefix}/include', []),
+        Libs('{prefix}/lib64/atlas', [
+            'libsatlas{shlib}', 
+        ]),
+        """    
+        Name: ATLAS Sequential
+        Description: Automatically Tuned Linear Algebra Software (ATLAS)
+        Version: {version}
+        URL: http://math-atlas.sourceforge.net
+        Libs: -L${libdir} -lsatlas ${rpath}
+        Libs.private: -lpthread -lm
+        Cflags: 
+        """,
+    )
+
+    # RedHat ATLAS
+    f77blas.search32(
+        '/usr',
+        Includes('{prefix}/include', []),
+        Libs('{prefix}/lib/atlas', [
+            'libsatlas{shlib}', 
+        ]),
+        """    
+        Name: ATLAS Sequential
+        Description: Automatically Tuned Linear Algebra Software (ATLAS)
+        Version: {version}
+        URL: http://math-atlas.sourceforge.net
+        Libs: -L${libdir} -lsatlas ${rpath}
+        Libs.private: -lpthread -lm
+        Cflags: 
+        """,
+    )
     
