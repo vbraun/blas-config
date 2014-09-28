@@ -5,6 +5,10 @@ Base Class for Compile/Link information
 
 import os
 
+import logging
+log = logging.getLogger()
+
+from blas_config.arch import binary_format
 
 
 CBLAS_TEMPLATE = """
@@ -27,14 +31,10 @@ Cflags: -I${includedir}
 PKG_CONFIG_TEMPLATE = """
 prefix={prefix}
 exec_prefix=${{prefix}}
+libdir={libdir}
+includedir={includedir}
 
-Name: {name}
-Description: C Basic Linear Algebra Subprograms (CBLAS)
-Version: 1.0
-URL: http://www.gnu.org/software/gsl
-Libs: -L${libdir} -lblas
-Libs.private: -lm
-Cflags: -I${includedir}
+{body}
 """
 
 
@@ -45,49 +45,84 @@ class BlasConfigException(Exception):
     """
 
 
-class Description(object):
-    
-    def __init__(self, name, description, url, version=None):
-        self.name = name
-        self.description = description
-        self.url = url
-        self.version = version if version else 'unknown version'
+class FileSystemObjects(object):
 
-    def __repr__(self):
-        return '{0} ({1})'.format(self.name, self.version)
+    def __init__(self, path, filenames):
+        self.path = path
+        self.filenames = tuple(filenames)
+
+    def make_expander(self, prefix):
+        raise NotImplementedError
+
+    def expand(self, prefix):
+        expander = self.make_expander(prefix)
+        self.path = expander(self.path)
+        self.filenames = tuple(map(expander, self.filenames))
+
+
+    def validate_file(self, filename):
+        """
+        Hook for additional validation of a file
+        """
+        return True
+
+    def validate(self):
+        for filename in self.filenames:
+            if not os.path.isabs(filename):
+                filename = os.path.join(self.path, filename)
+            if not os.path.exists(filename):
+                log.debug('does not exist: %s', filename)
+                return False
+            if not self.validate_file(filename):
+                log.debug('does not validate: %s', filename)
+                return False
+            log.debug('found: %s', filename)
+        return True
+
+class Includes(FileSystemObjects):
+
+    def make_expander(self, prefix):
+        path = self.path.format(prefix=prefix)
+        shlib = binary_format.shlib_ext()
+        def expand_one(name):
+            return name.format(prefix=prefix, includedir=path, shlib=shlib)
+        return expand_one
+
+class Libs(FileSystemObjects):
+
+    def make_expander(self, prefix):
+        path = self.path.format(prefix=prefix)
+        shlib = binary_format.shlib_ext()
+        def expand_one(name):
+            return name.format(prefix=prefix, libdir=path, shlib=shlib)
+        return expand_one
 
 
 class PkgConfig(object):
     
-    def __init__(self, name_pc, description, 
-                 prefix, libdir=None, exec_prefix=None, includedir=None,
-                 libs=None, libs_private=None, cflags=None):
-        self.metadata = description
+    def __init__(self, name_pc,
+                 prefix, libdir, includedir,
+                 body):
         self.name_pc = name_pc
-        if libdir is None:
-            libdir = os.path.join(prefix, 'lib')
-        if exec_prefix is None:
-            exec_prefix = prefix
-        if includedir is None:
-            includedir = os.path.join(prefix, 'include')
-        if libs is None:
-            libs = ''
-        if libs_private is None:
-            libs_private = ''
-        if cflags is None:
-            cflags = ''
+        self.prefix = prefix
+        self.libdir = libdir
+        self.includedir = includedir
+        self.body = body
 
     def __repr__(self):
-        return '[{0:<10}] {1}'.format(self.name_pc, self.description)
+        return '[{0:<10}] {1}'.format(self.name_pc, self.get_name())
+
+    def get_name(self):
+        for line in self.body.splitlines():
+            line = line.strip()
+            if line.startswith('Name:'):
+                return line[5:].strip()
+        raise ValueError('no name in body')
 
     def to_string(self):
         return PKG_CONFIG_TEMPLATE.format(
             prefix=self.prefix,
-            name=self.metadata.name,
-            description=self.metadata.description,
-            url=self.metadata.url,
-            version=self.metadata.version,
-            libs=self.libs,
-            libs_private=self.libs_private,
-            cflags=self.cflags,
+            libdir=self.libdir,
+            includedir=self.includedir,
+            body=self.body,
         )

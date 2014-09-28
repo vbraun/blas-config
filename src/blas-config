@@ -17,13 +17,7 @@ from blas_config.cmdline import launch
 launch()
 
 
-from blas_config.app import write_cblas_pc
 
-# write_cblas_pc(PKG_CONFIG_PATH)
-
-from blas_config.factory import *
-
-print cblas.favourite().to_string()
 
 
 

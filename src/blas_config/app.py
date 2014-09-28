@@ -33,5 +33,13 @@ def write_cblas_pc(path):
 
 class Application(object):
     
-    def cblas(self):
-        pass
+    def cblas(self, prefer=None):
+        if prefer is None:
+            prefer = []
+        else:
+            prefer = str(prefer).split(',')
+        from factory_cblas import cblas
+        pc = cblas.favourite(*prefer)
+        print('Using CBLAS: {0}'.format(pc.get_name()))
+        return pc
+    

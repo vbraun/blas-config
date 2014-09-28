@@ -5,79 +5,62 @@ Factory for PkgConfig instances
 
 import os
 import glob
+import textwrap
 
 import logging
 log = logging.getLogger()
 
-from blas_config.base import Description, BlasConfigException, PkgConfig
-from blas_config.arch import shlib_ext
-
+from blas_config.base import PkgConfig, Includes, Libs
+from blas_config.arch import bitwidth
 
 class Factory(object):
 
-    def __init__(self, name_pc):
+    def __init__(self, name_pc, override_prefix=None):
         self.name_pc = name_pc
+        self.override_prefix = override_prefix
         self.valid_configurations = list()
-        self.named_configurations = dict()
 
     def __repr__(self):
         return '\n'.join(map(repr, self.valid_configurations))
 
-    def favourite(self):
-        return self.valid_configurations[0]
+    def favourite(self, *prefer):
+        if len(self.valid_configurations) == 0:
+            raise ValueError('no valid configurations found')
+        remaining = self.valid_configurations
+        for keyword in prefer:
+            keyword = keyword.lower().strip()
+            good = []
+            for config in self.remaining:
+                if keyword in config.get_name().lower():
+                    good.append(config)
+            if len(good) == 0:
+                pass  # ignore that keyword
+            elif len(good) == 1:
+                return good[0]
+            else:
+                remaining = good  # restrict search
+        return remaining[0]
 
-    def shlib_ext(self):
-        
-
-    def resolve_glob(self, filename_glob):
-        """
-        Resolve a filename glob to an absolute path that we can use
-        """
-        filename_glob = filename_glob.format(shlib=shlib_ext())
-        log.debug('looking for %s', filename_glob)
-        for path in glob.glob(filename_glob):
-            path = os.path.abspath(path)
-            log.debug('using %s', path)
-            return path
-        log.debug('no match found')
-        raise BlasConfigException('no match found for {0}'.format(filename_glob))
-        
-    def guess_prefix(self, paths):
-        """
-        Extract the common path prefix
-        """
-        prefix = os.path.commonprefix(paths)
-        return prefix
-
-    def search(self, identifier, description, 
-               header_globs, library_globs, cflags=None):
-        try:
-            headers = map(self.resolve_glob, header_globs)
-            libraries = map(self.resolve_glob, library_globs)
-        except BlasConfigException:
-            log.debug('cannot find %s, ignoring', identifier)
+    def search(self, prefix, includes, libs, body):
+        if self.override_prefix is not None:
+            prefix = self.override_prefix
+        includes.expand(prefix)
+        libs.expand(prefix)
+        if not includes.validate():
             return
-        prefix = self.guess_prefix(headers + libraries)
-        pc = PkgConfig(self.name_pc, description, 
-                       prefix)
-        self.named_configurations[identifier] = pc
+        if not libs.validate():
+            return
+        pc = PkgConfig(self.name_pc, prefix, libs.path, includes.path, 
+                       textwrap.dedent(body).strip())
         self.valid_configurations.append(pc)
 
+    def search32(self, *args):
+        if bitwidth.is_32():
+            self.search(*args)
 
+    def search64(self, *args):
+        if bitwidth.is_64():
+            self.search(*args)
 
-
-cblas = Factory('cblas.pc')
-
-
-
-mkl = cblas.search(
-    'intel_mkl', 
-    Description(
-        'Intel-MKL',
-        'Intel Math Kernel Library', 
-        'http://www.intel.com', 
-        '11.2.0.090'), 
-    [], ['/opt/intel/composer*/mkl/lib/*/libmkl_gnu_thread*.{shlib}']
-)
 
 
