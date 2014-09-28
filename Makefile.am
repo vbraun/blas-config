@@ -14,13 +14,29 @@ install-exec-hook:
 	$(bindir)/blas-benchmark
 
 mostlyclean-local:
-	-cd bench && make mostlyclean
+	cd $(srcdir)/bench \
+	    && (test -f Makefile || PKG_CONFIG_PATH=`pwd`/dummy_pkgconfig ./configure ) \
+	    && make mostlyclean
 
-clean-local:
-	-cd bench && make clean
+clean-local: mostlyclean-local
+	cd $(srcdir)/bench \
+	    && (test -f Makefile || PKG_CONFIG_PATH=`pwd`/dummy_pkgconfig ./configure ) \
+	    && make clean
 
-distclean-local:
-	-cd bench && make distclean
+distclean-local: clean-local
+	cd $(srcdir)/bench \
+	    && (test -f Makefile || PKG_CONFIG_PATH=`pwd`/dummy_pkgconfig ./configure ) \
+	    && make distclean
 
-maintainer-clean-local:
-	-cd bench && make maintainer-clean
+maintainer-clean-local: distclean-local
+	cd $(srcdir)/bench \
+	    && (test -f Makefile || PKG_CONFIG_PATH=`pwd`/dummy_pkgconfig ./configure ) \
+	    && make maintainer-clean
+
+EXTRA_DIST = bench
+
+dist-hook:
+	cd $(distdir)/bench \
+	    && PKG_CONFIG_PATH=`pwd`/dummy_pkgconfig ./configure \
+	    && make distclean 
+	find $(distdir) -name "*~" -exec rm {} \;

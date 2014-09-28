@@ -1,0 +1,14 @@
+
+prefix=/usr
+exec_prefix=${prefix}
+libdir=/usr/lib64/atlas
+includedir=/usr/include
+rpath=-Wl,-rpath -Wl,/usr/lib64/atlas
+
+Name: ATLAS Sequential
+Description: Automatically Tuned Linear Algebra Software (ATLAS)
+Version: {version}
+URL: http://math-atlas.sourceforge.net
+Libs: -L${libdir} -lsatlas ${rpath}
+Libs.private: -lpthread -lm
+Cflags:
