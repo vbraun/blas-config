@@ -28,3 +28,10 @@ def write_cblas_pc(path):
     os.makedirs(path)
     with open(os.path.join(path, name), 'wt') as f:
         f.write(CBLAS_TEMPLATE)
+
+
+
+class Application(object):
+    
+    def cblas(self):
+        pass

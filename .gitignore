@@ -1,8 +1,11 @@
 *~
-.#.*
+.\#*
+\#*
 *\.rej#
 /local
 *.in
+*.pyc
+*.pyo
 aclocal.m4
 autom4te.cache
 config.log

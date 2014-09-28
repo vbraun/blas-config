@@ -4,13 +4,26 @@
 SITE_PACKAGES = '/home/vbraun/Code/blas-config/local/lib/python2.7/site-packages'
 PKG_CONFIG_PATH = '/home/vbraun/Code/blas-config/local/lib/pkgconfig'
 
+import logging
+logging.basicConfig()
+log = logging.getLogger()
+
+
+
 import sys
 sys.path.insert(1, SITE_PACKAGES)
 
+from blas_config.cmdline import launch
+launch()
+
+
 from blas_config.app import write_cblas_pc
 
-write_cblas_pc(PKG_CONFIG_PATH)
+# write_cblas_pc(PKG_CONFIG_PATH)
 
+from blas_config.factory import *
+
+print cblas.favourite().to_string()
 
 
 

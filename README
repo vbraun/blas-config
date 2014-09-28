@@ -1,0 +1,23 @@
+Automatic BLAS Configuration
+============================
+
+The goal of this program is to automatically pick the most suitable
+BLAS implementation found on the computer and install pkgconfig (*.pc)
+files for it. This then enables other programs to compile and link to
+BLAS without having to know anything about the implementation.
+
+
+Installation
+============
+
+Run ./configure && make && make install as usual.
+
+TODO: implement configure switch to manually select and/or specify
+alternate directories.
+
+
+For BLAS Users
+==============
+
+See bench/README for an example of how to integrate pkgconfig in your
+autotools project.
