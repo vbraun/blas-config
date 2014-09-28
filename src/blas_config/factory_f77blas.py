@@ -29,7 +29,7 @@ def build(f77blas):
         Description: Intel Math Kernel Library
         Version: {version}
         URL: https://software.intel.com/en-us/intel-mkl
-        Libs: -L${libdir} -Wl,--no-as-needed -lmkl_gf_lp64 -lmkl_sequential -lmkl_core
+        Libs: -L${libdir} -Wl,--no-as-needed -lmkl_gf_lp64 -lmkl_sequential -lmkl_core ${rpath}
         Libs.private: -lpthread -lm
         Cflags: -m64 -I${includedir}
         """,
@@ -52,7 +52,7 @@ def build(f77blas):
         Description: Intel Math Kernel Library
         Version: {version}
         URL: https://software.intel.com/en-us/intel-mkl
-        Libs: -L${libdir} -Wl,--no-as-needed -lmkl_gf_lp64 -lmkl_sequential -lmkl_core
+        Libs: -L${libdir} -Wl,--no-as-needed -lmkl_gf_lp64 -lmkl_sequential -lmkl_core ${rpath}
         Libs.private: -lpthread -lm
         Cflags: -m32 -I${includedir}
         """,

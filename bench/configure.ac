@@ -1,7 +1,6 @@
 # Boilerplate
 AC_PREREQ([2.69])
 AC_INIT([blas-benchmark], [1.0], [vbraun.name@gmail.com])
-AM_INIT_AUTOMAKE
 
 # We need a working C compiler
 AC_PROG_CC
@@ -25,11 +24,11 @@ PKG_CHECK_MODULES([CBLAS], [cblas])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([src/bench.h])
 AC_CONFIG_HEADERS([src/config.h])
-
 AC_CONFIG_FILES([
   Makefile
   src/Makefile
 ])
+AM_INIT_AUTOMAKE
 
 # Write output, last statement
 AC_OUTPUT

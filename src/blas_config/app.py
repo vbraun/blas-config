@@ -8,29 +8,6 @@ import os
 from blas_config.factory import FactoryCBLAS, FactoryF77BLAS
 
 
-CBLAS_TEMPLATE = """
-prefix=/usr
-libdir=/usr/lib64
-exec_prefix=${prefix}
-includedir=${prefix}/include
-
-Name: cblas
-Description: C Basic Linear Algebra Subprograms (CBLAS)
-Version: 1.0
-URL: http://www.gnu.org/software/gsl
-Libs: -L${libdir} -lblas
-Libs.private: -lm
-Cflags: -I${includedir}
-"""
-
-
-def write_cblas_pc(path):
-    name = 'cblas.pc'
-    os.makedirs(path)
-    with open(os.path.join(path, name), 'wt') as f:
-        f.write(CBLAS_TEMPLATE)
-
-
 
 class Application(object):
     
@@ -82,6 +59,11 @@ class Application(object):
 
         This is called at the end of "make install".
         """
+        print('Initial setup')
+        if search is not None:
+            print('Searching at {0}'.format(search))
+        if prefer is not None:
+            print('Preferring the following installations: {0}'.format(prefer))
         cblas_pc = self.cblas(search, prefer)
         if cblas_pc is None and search is not None:
             print('Searching for system CBLAS installations instead...')

@@ -17,6 +17,7 @@ prefix={prefix}
 exec_prefix=${{prefix}}
 libdir={libdir}
 includedir={includedir}
+rpath=-Wl,-rpath -Wl,{libdir}
 
 {body}
 """
