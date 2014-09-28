@@ -16,3 +16,4 @@ missing
 py-compile
 stamp-h1
 Makefile
+/src/blas-config
