@@ -29,21 +29,21 @@ def make_parser():
     subparsers = parser.add_subparsers(dest='subcommand')
 
     parser_cblas = subparsers.add_parser('cblas', help='CBLAS configuration')
+    parser_f77blas = subparsers.add_parser('f77blas', help='F77BLAS configuration')
 
     return parser
 
 
-def launch():
+def launch(app):
     parser = make_parser()
     args = parser.parse_args(sys.argv[1:])
     if args.log is not None:
         level = getattr(logging, args.log.upper())
         log.setLevel(level=level)
 
-    from .app import Application
-    app = Application()
-
     if args.option_help:
         parser.print_help()
     elif args.subcommand == 'cblas':
-        app.cblas()
+        app.write_pc(app.cblas())
+    elif args.subcommand == 'f77blas':
+        app.write_pc(app.f77blas())

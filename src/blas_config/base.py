@@ -100,10 +100,11 @@ class Libs(FileSystemObjects):
 
 class PkgConfig(object):
     
-    def __init__(self, name_pc,
+    def __init__(self, name_pc, version,
                  prefix, libdir, includedir,
                  body):
         self.name_pc = name_pc
+        self.version = version
         self.prefix = prefix
         self.libdir = libdir
         self.includedir = includedir
@@ -124,5 +125,6 @@ class PkgConfig(object):
             prefix=self.prefix,
             libdir=self.libdir,
             includedir=self.includedir,
+            version=self.version,
             body=self.body,
         )

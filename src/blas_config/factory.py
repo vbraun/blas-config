@@ -15,10 +15,11 @@ from blas_config.arch import bitwidth
 
 class Factory(object):
 
-    def __init__(self, name_pc, override_prefix=None):
+    def __init__(self, name_pc, override_prefix=None, version=None):
         self.name_pc = name_pc
         self.override_prefix = override_prefix
         self.valid_configurations = list()
+        self.version = version if version is not None else '1.0'
 
     def __repr__(self):
         return '\n'.join(map(repr, self.valid_configurations))
@@ -30,7 +31,7 @@ class Factory(object):
         for keyword in prefer:
             keyword = keyword.lower().strip()
             good = []
-            for config in self.remaining:
+            for config in remaining:
                 if keyword in config.get_name().lower():
                     good.append(config)
             if len(good) == 0:
@@ -50,7 +51,8 @@ class Factory(object):
             return
         if not libs.validate():
             return
-        pc = PkgConfig(self.name_pc, prefix, libs.path, includes.path, 
+        pc = PkgConfig(self.name_pc, self.version, 
+                       prefix, libs.path, includes.path, 
                        textwrap.dedent(body).strip())
         self.valid_configurations.append(pc)
 

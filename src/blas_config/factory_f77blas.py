@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-CBLAS PkgConfig Instances
+F77BLAS PkgConfig Instances
 """
 
 import os
@@ -13,11 +13,11 @@ log = logging.getLogger()
 from blas_config.base import PkgConfig, Includes, Libs
 from blas_config.factory import Factory
 
-cblas = Factory('cblas.pc')
+f77blas = Factory('f77blas.pc')
 
-cblas.search64(
-    # /opt/intel/mkl/tools/mkl_link_tool -p no -c gnu_c -a intel64 -opts
-    # /opt/intel/mkl/tools/mkl_link_tool -p no -c gnu_c -a intel64 -libs
+f77blas.search64(
+    # /opt/intel/mkl/tools/mkl_link_tool -p no -c gnu_f -a intel64 -opts
+    # /opt/intel/mkl/tools/mkl_link_tool -p no -c gnu_f -a intel64 -libs
     '/opt/intel/mkl',
     Includes('{prefix}/include', [
         '{includedir}/mkl.h',
@@ -38,9 +38,9 @@ cblas.search64(
     """,
 )
 
-cblas.search32(
-    # /opt/intel/mkl/tools/mkl_link_tool -p no -c gnu_c -a ia-32 -opts
-    # /opt/intel/mkl/tools/mkl_link_tool -p no -c gnu_c -a ia-32 -libs
+f77blas.search32(
+    # /opt/intel/mkl/tools/mkl_link_tool -p no -c gnu_f -a ia-32 -opts
+    # /opt/intel/mkl/tools/mkl_link_tool -p no -c gnu_f -a ia-32 -libs
     '/opt/intel/mkl',
     Includes('{prefix}/include', [
         '{includedir}/mkl.h',

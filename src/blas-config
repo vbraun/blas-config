@@ -1,22 +1,35 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+VERSION = '1.0'
 SITE_PACKAGES = '/home/vbraun/Code/blas-config/local/lib/python2.7/site-packages'
 PKG_CONFIG_PATH = '/home/vbraun/Code/blas-config/local/lib/pkgconfig'
+
+import os
+import sys
+sys.path.insert(1, SITE_PACKAGES)
 
 import logging
 logging.basicConfig()
 log = logging.getLogger()
 
+from blas_config.app import Application
+app = Application(PKG_CONFIG_PATH, VERSION)
 
-
-import sys
-sys.path.insert(1, SITE_PACKAGES)
-
-from blas_config.cmdline import launch
-launch()
-
-
+# Do the setup without requiring argparse
+if len(sys.argv) >= 2 and sys.argv[1] == 'initial-setup':
+    search = None
+    prefer = None
+    for arg in sys.argv[2:]:
+        if arg.startswith('--search'):
+	    search = arg[len('--search'):]
+        if arg.startswith('--prefer'):
+	    prefer = arg[len('--prefer'):]
+    app.initial_setup(search, prefer)
+    print(os.environ)
+else:
+    from blas_config.cmdline import launch
+    launch(app)
 
 
 

@@ -33,13 +33,46 @@ def write_cblas_pc(path):
 
 class Application(object):
     
+    def __init__(self, pkg_config_path, version):
+        self._pkg_config_path = pkg_config_path
+        self._version = version
+
     def cblas(self, prefer=None):
         if prefer is None:
             prefer = []
         else:
             prefer = str(prefer).split(',')
-        from factory_cblas import cblas
+        from blas_config.factory_cblas import cblas
         pc = cblas.favourite(*prefer)
         print('Using CBLAS: {0}'.format(pc.get_name()))
         return pc
+
+    def f77blas(self, prefer=None):
+        if prefer is None:
+            prefer = []
+        else:
+            prefer = str(prefer).split(',')
+        from factory_f77blas import f77blas
+        pc = f77blas.favourite(*prefer)
+        print('Using F77BLAS: {0}'.format(pc.get_name()))
+        return pc
     
+    def write_pc(self, pc):
+        path = self._pkg_config_path
+        try:
+            os.makedirs(path)
+        except OSError:
+            pass  # exists already?
+        with open(os.path.join(path, pc.name_pc), 'wt') as f:
+            f.write(pc.to_string())
+        
+    def initial_setup(self, search, prefer):
+        """
+        Initial setup
+
+        This is called at the end of "make install".
+        """
+        self.write_pc(self.cblas(prefer))
+        self.write_pc(self.f77blas(prefer))
+
+        
