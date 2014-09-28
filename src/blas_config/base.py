@@ -11,22 +11,6 @@ log = logging.getLogger()
 from blas_config.arch import binary_format
 
 
-CBLAS_TEMPLATE = """
-prefix=/usr
-libdir=/usr/lib64
-exec_prefix=${prefix}
-includedir=${prefix}/include
-
-Name: cblas
-Description: C Basic Linear Algebra Subprograms (CBLAS)
-Version: 1.0
-URL: http://www.gnu.org/software/gsl
-Libs: -L${libdir} -lblas
-Libs.private: -lm
-Cflags: -I${includedir}
-"""
-
-
 
 PKG_CONFIG_TEMPLATE = """
 prefix={prefix}
@@ -36,13 +20,6 @@ includedir={includedir}
 
 {body}
 """
-
-
-
-class BlasConfigException(Exception):
-    """
-    Exception to be thrown if something is not a usable BLAS.
-    """
 
 
 class FileSystemObjects(object):
@@ -79,6 +56,7 @@ class FileSystemObjects(object):
             log.debug('found: %s', filename)
         return True
 
+
 class Includes(FileSystemObjects):
 
     def make_expander(self, prefix):
@@ -87,6 +65,7 @@ class Includes(FileSystemObjects):
         def expand_one(name):
             return name.format(prefix=prefix, includedir=path, shlib=shlib)
         return expand_one
+
 
 class Libs(FileSystemObjects):
 

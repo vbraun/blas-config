@@ -15,7 +15,6 @@ AC_CONFIG_FILES([
   src/blas_config/Makefile
 ])
 
-
 AC_ARG_VAR(
     BLAS_CONFIG_SEARCH, 
     [Directory to search for libraries instead of the default
@@ -24,7 +23,6 @@ AC_ARG_VAR(
      directory). Matches will take precedence over system
      installations.]
 )
-
 
 AC_ARG_VAR(
     BLAS_CONFIG_PREFER, 

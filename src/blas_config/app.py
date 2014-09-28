@@ -5,6 +5,7 @@ Main entry point
 
 import sys
 import os
+from blas_config.factory import FactoryCBLAS, FactoryF77BLAS
 
 
 CBLAS_TEMPLATE = """
@@ -37,27 +38,36 @@ class Application(object):
         self._pkg_config_path = pkg_config_path
         self._version = version
 
-    def cblas(self, prefer=None):
+    def cblas(self, search=None, prefer=None):
         if prefer is None:
             prefer = []
         else:
             prefer = str(prefer).split(',')
-        from blas_config.factory_cblas import cblas
+        cblas = FactoryCBLAS(override_prefix=search)
         pc = cblas.favourite(*prefer)
-        print('Using CBLAS: {0}'.format(pc.get_name()))
+        if pc is None:
+            print('Error: No CBLAS implementation found')
+        else:
+            print('Using CBLAS: {0}'.format(pc.get_name()))
         return pc
 
-    def f77blas(self, prefer=None):
+    def f77blas(self, search=None, prefer=None):
         if prefer is None:
             prefer = []
         else:
             prefer = str(prefer).split(',')
-        from factory_f77blas import f77blas
+        f77blas = FactoryF77BLAS(override_prefix=search)
         pc = f77blas.favourite(*prefer)
-        print('Using F77BLAS: {0}'.format(pc.get_name()))
+        if pc is None:
+            print('Error: No F77BLAS implementation found')
+        else:
+            print('Using F77BLAS: {0}'.format(pc.get_name()))
         return pc
     
     def write_pc(self, pc):
+        if pc is None:
+            print('Error: No implementation found, aborting')
+            sys.exit(1)
         path = self._pkg_config_path
         try:
             os.makedirs(path)
@@ -72,7 +82,17 @@ class Application(object):
 
         This is called at the end of "make install".
         """
-        self.write_pc(self.cblas(prefer))
-        self.write_pc(self.f77blas(prefer))
+        cblas_pc = self.cblas(search, prefer)
+        if cblas_pc is None and search is not None:
+            print('Searching for system CBLAS installations instead...')
+            cblas_pc = self.cblas(None, prefer)
+
+        f77blas_pc = self.f77blas(search, prefer)
+        if f77blas_pc is None and search is not None:
+            print('Searching for system F77BLAS installations instead...')
+            f77blas_pc = self.f77blas(None, prefer)
+
+        self.write_pc(cblas_pc)
+        self.write_pc(f77blas_pc)
 
         

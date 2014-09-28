@@ -13,7 +13,8 @@ log = logging.getLogger()
 from blas_config.base import PkgConfig, Includes, Libs
 from blas_config.arch import bitwidth
 
-class Factory(object):
+
+class FactoryBase(object):
 
     def __init__(self, name_pc, override_prefix=None, version=None):
         self.name_pc = name_pc
@@ -26,7 +27,7 @@ class Factory(object):
 
     def favourite(self, *prefer):
         if len(self.valid_configurations) == 0:
-            raise ValueError('no valid configurations found')
+            return None
         remaining = self.valid_configurations
         for keyword in prefer:
             keyword = keyword.lower().strip()
@@ -65,4 +66,21 @@ class Factory(object):
             self.search(*args)
 
 
+
+class FactoryCBLAS(FactoryBase):
+
+    def __init__(self, override_prefix=None, version=None):
+        super(FactoryCBLAS, self).__init__(
+            'cblas.pc', override_prefix=override_prefix, version=version)
+        from blas_config.factory_cblas import build
+        build(self)
+
+
+class FactoryF77BLAS(FactoryBase):
+
+    def __init__(self, override_prefix=None, version=None):
+        super(FactoryF77BLAS, self).__init__(
+            'f77blas.pc', override_prefix=override_prefix, version=version)
+        from blas_config.factory_f77blas import build
+        build(self)
 

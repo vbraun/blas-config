@@ -29,7 +29,16 @@ def make_parser():
     subparsers = parser.add_subparsers(dest='subcommand')
 
     parser_cblas = subparsers.add_parser('cblas', help='CBLAS configuration')
+    parser_cblas.add_argument('--search', dest='search', default=None,
+                              help='Search in given path only')
+    parser_cblas.add_argument('--prefer', dest='prefer', default=None,
+                              help='Comma-separated list of preferred implementations')
+
     parser_f77blas = subparsers.add_parser('f77blas', help='F77BLAS configuration')
+    parser_f77blas.add_argument('--search', dest='search', default=None,
+                                help='Search in given path only')
+    parser_f77blas.add_argument('--prefer', dest='prefer', default=None,
+                                help='Comma-separated list of preferred implementations')
 
     return parser
 
@@ -44,6 +53,6 @@ def launch(app):
     if args.option_help:
         parser.print_help()
     elif args.subcommand == 'cblas':
-        app.write_pc(app.cblas())
+        app.write_pc(app.cblas(search=args.search, prefer=args.prefer))
     elif args.subcommand == 'f77blas':
-        app.write_pc(app.f77blas())
+        app.write_pc(app.f77blas(search=args.search, prefer=args.prefer))
